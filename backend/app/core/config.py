@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 # 提取项目工程的根目录路径，拼接.env的路径并加载.env中的环境配置
 BASE_DIR = Path(__file__).resolve().parents[3]
 
-# print(f"项目根目录路径: {BASE_DIR}")
-
 # 拼接路径
 ENV_FILE = BASE_DIR / ".env"
 load_dotenv(ENV_FILE, override=False)
@@ -41,6 +39,30 @@ class Settings(object):
     )
     db_sqlite_path: str = field(
         default_factory=lambda: os.getenv("DB_SQLITE_PATH", "./data/app.db")
+    )
+    tz: str = field(default_factory=lambda: os.getenv("TZ", "Asia/Shanghai"))
+    postgres_image: str = field(
+        default_factory=lambda: os.getenv("POSTGRES_IMAGE", "postgres:18-alpine")
+    )
+    postgres_container_name: str = field(
+        default_factory=lambda: os.getenv(
+            "POSTGRES_CONTAINER_NAME", "anonforge_dev_postgres"
+        )
+    )
+    postgres_host_port: int = field(
+        default_factory=lambda: int(os.getenv("POSTGRES_HOST_PORT", "5432"))
+    )
+    db_data_path: str = field(
+        default_factory=lambda: os.getenv("DB_DATA_PATH", "./data/postgres/data")
+    )
+    db_healthcheck_interval: str = field(
+        default_factory=lambda: os.getenv("DB_HEALTHCHECK_INTERVAL", "10s")
+    )
+    db_healthcheck_timeout: str = field(
+        default_factory=lambda: os.getenv("DB_HEALTHCHECK_TIMEOUT", "5s")
+    )
+    db_healthcheck_retries: int = field(
+        default_factory=lambda: int(os.getenv("DB_HEALTHCHECK_RETRIES", "5"))
     )
 
 

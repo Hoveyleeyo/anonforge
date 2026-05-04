@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import Generator
-from sqlmodel import Session, SQLModel, create_engine
+from collections.abc import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.config import settings
 from app.utils.string_tools import build_database_url
 
@@ -10,11 +12,11 @@ from app.utils.string_tools import build_database_url
 # 创建数据库的客户端基础类 SQLModel
 
 
-def build_engine():
-    """构建数据库引擎。
+def build_engine() -> AsyncEngine:
+    """根据当前配置构建异步数据库引擎。
 
     Returns:
-        Engine: 基于当前配置创建的 SQLModel/SQLAlchemy 引擎实例。
+        AsyncEngine: 基于当前配置创建的 SQLModel 异步引擎实例。
     """
 
     database_url = build_database_url(
@@ -31,27 +33,33 @@ def build_engine():
     connect_args = (
         {"check_same_thread": False} if database_url.startswith("sqlite") else {}
     )
-    return create_engine(database_url, echo=False, connect_args=connect_args)
+    return create_async_engine(database_url, echo=False, connect_args=connect_args)
 
 
 engine = build_engine()
 
+async_session_maker = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
 
-def create_db_and_tables() -> None:
+
+async def create_db_and_tables() -> None:
     """根据当前 SQLModel 元数据创建数据库表。"""
-    SQLModel.metadata.create_all(engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
 
 
-def drop_db_and_tables() -> None:
+async def drop_db_and_tables() -> None:
     """根据当前 SQLModel 元数据创建数据库表。"""
-    SQLModel.metadata.drop_all(engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.drop_all)
 
 
-def get_session() -> Generator[Session, None, None]:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """提供数据库会话依赖。
 
     Yields:
         Session: 当前请求可复用的 SQLModel 会话对象。
     """
-    with Session(engine) as session:
+    async with async_session_maker() as session:
         yield session

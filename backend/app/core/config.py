@@ -53,7 +53,7 @@ class Settings(object):
         default_factory=lambda: int(os.getenv("POSTGRES_HOST_PORT", "5432"))
     )
     db_data_path: str = field(
-        default_factory=lambda: os.getenv("DB_DATA_PATH", "./data/postgres/data")
+        default_factory=lambda: os.getenv("DB_DATA_PATH", "./postgres/data")
     )
     db_healthcheck_interval: str = field(
         default_factory=lambda: os.getenv("DB_HEALTHCHECK_INTERVAL", "10s")
@@ -63,6 +63,13 @@ class Settings(object):
     )
     db_healthcheck_retries: int = field(
         default_factory=lambda: int(os.getenv("DB_HEALTHCHECK_RETRIES", "5"))
+    )
+
+    user_default_admin_name: str = field(
+        default_factory=lambda: os.getenv("USER_DEFAULT_ADMIN_NAME", "admin")
+    )
+    user_default_admin_password: str = field(
+        default_factory=lambda: os.getenv("USER_DEFAULT_ADMIN_PASSWORD", "admin123")
     )
 
 

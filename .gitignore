@@ -219,3 +219,6 @@ __marimo__/
 
 # data files
 data/
+
+# DS_Store
+.DS_Store

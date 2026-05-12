@@ -2,8 +2,11 @@ fastapi
 uvicorn[standard]
 sqlmodel
 psycopg[binary]
+aiosqlite
+greenlet
 pydantic
 pillow
 httpx
 crewai
 alembic
+pytest

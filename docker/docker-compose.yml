@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
       TZ: ${TZ}
     volumes:
-      - ${DB_DATA_PATH:-./data/postgres/data}:/var/lib/postgresql
+      - ${DB_DATA_PATH:-./data/postgres}:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: ${DB_HEALTHCHECK_INTERVAL:-10s}
